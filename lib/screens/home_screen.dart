@@ -16,27 +16,21 @@ class HomeScreen extends StatelessWidget {
           child: Column(
             children: [
               const SizedBox(height: 8),
+              // ── App Bar ──
               Row(
                 children: [
-                  Container(
-                    width: 36,
-                    height: 36,
-                    decoration: BoxDecoration(
-                      color: AppTheme.primaryOrange.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(
-                        color: AppTheme.primaryOrange.withValues(alpha: 0.3),
-                      ),
-                    ),
-                    child: const Icon(
-                      Icons.casino_outlined,
-                      size: 20,
-                      color: AppTheme.primaryOrange,
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.asset(
+                      'assets/images/splash_logo_600x600.png',
+                      width: 36,
+                      height: 36,
+                      fit: BoxFit.contain,
                     ),
                   ),
                   const Expanded(
                     child: Text(
-                      'Kelime Avı',
+                      'Zihindar',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 20,
@@ -45,101 +39,80 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Container(
-                    width: 36,
-                    height: 36,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: AppTheme.cardColor,
-                      border: Border.all(color: AppTheme.divider),
-                    ),
-                    child: const Icon(
-                      Icons.person_outline,
-                      size: 18,
-                      color: AppTheme.textSecondary,
-                    ),
-                  ),
+                  const SizedBox(width: 36),
                 ],
               ),
-              const SizedBox(height: 24),
+
+              // ── Centro content ──
               Expanded(
-                child: Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(24),
-                    color: AppTheme.cardColor,
-                  ),
-                  child: Column(
-                    children: [
-                      ClipRRect(
-                        borderRadius: const BorderRadius.vertical(
-                          top: Radius.circular(24),
-                        ),
-                        child: Image.network(
-                          'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200&q=80',
-                          height: 240,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                        ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Logo with glow
+                    Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppTheme.primaryOrange.withValues(
+                              alpha: 0.3,
+                            ),
+                            blurRadius: 60,
+                            spreadRadius: 8,
+                          ),
+                        ],
                       ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 24,
-                          vertical: 32,
-                        ),
-                        child: Column(
-                          children: [
-                            RichText(
-                              textAlign: TextAlign.center,
-                              text: TextSpan(
-                                style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 26,
-                                  height: 1.2,
-                                  fontWeight: FontWeight.w800,
-                                  color: Colors.white,
-                                ),
-                                children: const [
-                                  TextSpan(text: 'Arkadaşlarınla\n'),
-                                  TextSpan(text: 'Eğlenceye hazır mısın?'),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            const Text(
-                              'Sosyal bir offline parti deneyimi seni\nbekliyor.',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: AppTheme.textSecondary,
-                                fontWeight: FontWeight.w500,
-                                height: 1.4,
-                              ),
-                            ),
-                            const SizedBox(height: 32),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                _buildBadge(
-                                  Icons.people_alt,
-                                  '2-8 Oyuncu',
-                                  AppTheme.primaryOrange,
-                                ),
-                                const SizedBox(width: 12),
-                                _buildBadge(
-                                  Icons.schedule,
-                                  '15 Dakika',
-                                  AppTheme.cyan,
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                      child: Image.asset(
+                        'assets/images/splash_logo_600x600.png',
+                        width: 180,
+                        height: 180,
                       ),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 36),
+
+                    // Title
+                    const SizedBox(height: 48),
+
+                    // Tagline
+                    Text(
+                      'Zihinleri tara, hedefi bul',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 24,
+                        color: AppTheme.primaryOrange,
+                        fontWeight: FontWeight.w600,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    const Text(
+                      '"Türkçe Parti Oyunu"',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: AppTheme.textSecondary,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+
+                    // Badges
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _buildBadge(
+                          Icons.people_alt,
+                          '2-8 Oyuncu',
+                          AppTheme.primaryOrange,
+                        ),
+                        const SizedBox(width: 12),
+                        _buildBadge(Icons.schedule, '15 Dakika', AppTheme.cyan),
+                      ],
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 24),
+
+              // ── Bottom Buttons ──
               SizedBox(
                 width: double.infinity,
                 height: 56,
