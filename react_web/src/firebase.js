@@ -3,14 +3,14 @@ import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyBhqCArkoYHdGxWmzebnW_ZyAFvIzrSqEI",
-    authDomain: "zihindar.firebaseapp.com",
-    databaseURL: "https://zihindar-default-rtdb.firebaseio.com",
-    projectId: "zihindar",
-    storageBucket: "zihindar.firebasestorage.app",
-    messagingSenderId: "345376266726",
-    appId: "1:345376266726:web:608dd589acd083697d9e27",
-    measurementId: "G-5K3JDWR3JZ"
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+    databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL,
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+    appId: import.meta.env.VITE_FIREBASE_APP_ID,
+    measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
 const app = initializeApp(firebaseConfig);
