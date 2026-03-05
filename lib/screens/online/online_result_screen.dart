@@ -20,7 +20,7 @@ class OnlineResultScreen extends StatelessWidget {
     final guesses = Map<String, dynamic>.from(data['guesses'] ?? {});
     final players = List<Map<String, dynamic>>.from(data['players'] ?? []);
     final hostUid = data['hostUid'] as String;
-    final uid = AuthService.currentUser!.uid;
+    final uid = AuthService.currentUser?.uid ?? '';
     final isHost = uid == hostUid;
     final currentRound = data['currentRound'] as int? ?? 0;
     final totalRounds = data['totalRounds'] as int? ?? 0;
@@ -54,8 +54,51 @@ class OnlineResultScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Sonuç - Tur $currentRound/$totalRounds'),
+        title: Text('Sonu\u00e7 - Tur $currentRound/$totalRounds'),
         automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.exit_to_app, size: 20),
+            tooltip: 'Oyundan Ayr\u0131l',
+            onPressed: () async {
+              final confirm = await showDialog<bool>(
+                context: context,
+                builder: (ctx) => AlertDialog(
+                  backgroundColor: AppTheme.cardColor,
+                  title: const Text('Oyundan Ayr\u0131l'),
+                  content: const Text(
+                    'Oyundan ayr\u0131lmak istedi\u011fine emin misin?',
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(ctx, false),
+                      child: const Text('\u0130ptal'),
+                    ),
+                    TextButton(
+                      onPressed: () => Navigator.pop(ctx, true),
+                      child: const Text(
+                        'Ayr\u0131l',
+                        style: TextStyle(color: AppTheme.error),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+              if (confirm == true && context.mounted) {
+                final user = AuthService.currentUser;
+                if (user != null) {
+                  await RoomService.leaveRoom(
+                    roomCode: roomCode,
+                    uid: user.uid,
+                  );
+                }
+                if (context.mounted) {
+                  Navigator.of(context).popUntil((route) => route.isFirst);
+                }
+              }
+            },
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -189,7 +232,7 @@ class OnlineResultScreen extends StatelessWidget {
                             ),
                             child: Center(
                               child: Text(
-                                playerName[0].toUpperCase(),
+                                (playerName as String).isNotEmpty ? playerName[0].toUpperCase() : '?',
                                 style: const TextStyle(
                                   color: AppTheme.primaryOrange,
                                   fontWeight: FontWeight.w700,

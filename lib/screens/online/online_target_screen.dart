@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/target_indicator.dart';
@@ -84,11 +83,7 @@ class OnlineTargetScreen extends StatelessWidget {
             const Spacer(),
             ElevatedButton(
               onPressed: () async {
-                // Phase'i waiting_clue'ya çevir
-                await FirebaseFirestore.instance
-                    .collection('rooms')
-                    .doc(roomCode)
-                    .update({'phase': 'waiting_clue'});
+                await RoomService.advanceToCluePhase(roomCode: roomCode);
               },
               child: const Text('İpucu Yaz'),
             ),

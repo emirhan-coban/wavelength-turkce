@@ -107,18 +107,64 @@ class RoomService {
 
       final data = doc.data()!;
       final players = List<Map<String, dynamic>>.from(data['players'] ?? []);
-      players.removeWhere((p) => p['uid'] == uid);
+      final leavingIndex = players.indexWhere((p) => p['uid'] == uid);
+      if (leavingIndex < 0) return;
+
+      players.removeAt(leavingIndex);
 
       if (players.isEmpty) {
         transaction.delete(ref);
-      } else {
-        // Eğer host çıktıysa, yeni host ata
-        String hostUid = data['hostUid'];
-        if (hostUid == uid) {
-          hostUid = players.first['uid'];
-        }
-        transaction.update(ref, {'players': players, 'hostUid': hostUid});
+        return;
       }
+
+      // Eğer host çıktıysa, yeni host ata
+      String hostUid = data['hostUid'] as String;
+      if (hostUid == uid) {
+        hostUid = players.first['uid'];
+      }
+
+      Map<String, dynamic> updateData = {
+        'players': players,
+        'hostUid': hostUid,
+      };
+
+      // Oyun devam ediyorsa leaderIndex'i düzelt
+      final status = data['status'] as String;
+      if (status == 'playing') {
+        int leaderIndex = data['currentLeaderIndex'] as int;
+
+        // Eğer çıkan oyuncu liderden önceyse index'i düşür
+        if (leavingIndex < leaderIndex) {
+          leaderIndex--;
+        }
+        // Eğer çıkan oyuncu liderse, aynı index'teki yeni oyuncu lider olur
+        // Ama sınır kontrolü yapalım
+        if (leaderIndex >= players.length) {
+          leaderIndex = 0;
+        }
+        updateData['currentLeaderIndex'] = leaderIndex;
+
+        // Eğer guessing phase'indeyse ve kalan oyuncular tahmin ettiyse results'a geç
+        final phase = data['phase'] as String? ?? '';
+        if (phase == 'guessing') {
+          final guesses = Map<String, dynamic>.from(data['guesses'] ?? {});
+          // Çıkan oyuncunun tahminini sil
+          guesses.remove(uid);
+          int expectedGuessCount = players.length - 1; // lider hariç
+          if (expectedGuessCount <= 0 || guesses.length >= expectedGuessCount) {
+            updateData['phase'] = 'results';
+            updateData['guesses'] = guesses;
+          }
+        }
+
+        // Oyuncu sayısı 1'e düştüyse oyunu bitir
+        if (players.length < 2) {
+          updateData['phase'] = 'game_over';
+          updateData['status'] = 'finished';
+        }
+      }
+
+      transaction.update(ref, updateData);
     });
   }
 
@@ -143,8 +189,8 @@ class RoomService {
 
     // İlk turu hazırla
     final pairs = SpectrumData.getPairsForCategory(categoryId);
-    pairs.shuffle(_random);
-    final firstPair = pairs.first;
+    final firstPairIdx = _random.nextInt(pairs.length);
+    final firstPair = pairs[firstPairIdx];
     final targetPosition = _random.nextDouble() * 0.7 + 0.15;
 
     // Tüm oyuncu skorlarını sıfırla
@@ -168,7 +214,14 @@ class RoomService {
       },
       'players': players,
       'guesses': {},
-      'usedPairIndices': [0],
+      'usedPairIndices': [firstPairIdx],
+    });
+  }
+
+  /// Lider hedefi gördü, ipucu yazma aşamasına geç
+  static Future<void> advanceToCluePhase({required String roomCode}) async {
+    await _db.collection('rooms').doc(roomCode).update({
+      'phase': 'waiting_clue',
     });
   }
 
@@ -202,6 +255,9 @@ class RoomService {
       final players = List<Map<String, dynamic>>.from(data['players'] ?? []);
       final leaderIndex = data['currentLeaderIndex'] as int;
 
+      // Zaten tahmin yapmışsa tekrar ekleme (exploit önleme)
+      if (guesses.containsKey(uid)) return;
+
       // Skor hesapla
       double diff = (guessPosition - target).abs();
       int score;
@@ -219,9 +275,7 @@ class RoomService {
 
       guesses[uid] = {'position': guessPosition, 'score': score};
 
-      // Liderin skoruna ekle (tüm tahminlerin ortalaması değil, takım puanı)
-      // Wavelength'de lider'e puan gider
-      // Burada her oyuncuya kendi puanını verelim
+      // Tahmin yapan oyuncuya puan ekle
       for (var p in players) {
         if (p['uid'] == uid) {
           p['score'] = (p['score'] as int) + score;
@@ -239,6 +293,16 @@ class RoomService {
       };
 
       if (allGuessed) {
+        // Lidere de puan ver: tüm tahminlerin ortalama skoru
+        int totalScore = 0;
+        guesses.forEach((_, v) => totalScore += (v['score'] as int));
+        int leaderScore = (totalScore / guesses.length).round();
+
+        if (leaderIndex < players.length) {
+          players[leaderIndex]['score'] =
+              (players[leaderIndex]['score'] as int) + leaderScore;
+        }
+        updateData['players'] = players;
         updateData['phase'] = 'results';
       }
 

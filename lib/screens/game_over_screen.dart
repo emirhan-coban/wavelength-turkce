@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../models/game_state.dart';
 import 'turn_change_screen.dart';
@@ -161,7 +161,7 @@ class GameOverScreen extends StatelessWidget {
                                 ),
                                 child: Center(
                                   child: Text(
-                                    p.name[0],
+                                    p.name.isNotEmpty ? p.name[0] : '?',
                                     style: TextStyle(
                                       color: i == 0
                                           ? Colors.white

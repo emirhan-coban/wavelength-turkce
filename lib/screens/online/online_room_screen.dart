@@ -20,7 +20,18 @@ class _OnlineRoomScreenState extends State<OnlineRoomScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final uid = AuthService.currentUser!.uid;
+    final user = AuthService.currentUser;
+    if (user == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (context.mounted) {
+          Navigator.of(context).popUntil((route) => route.isFirst);
+        }
+      });
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+    final uid = user.uid;
 
     return PopScope(
       canPop: false,
@@ -53,17 +64,19 @@ class _OnlineRoomScreenState extends State<OnlineRoomScreen> {
           final status = data['status'] as String;
           final phase = data['phase'] as String? ?? 'lobby';
 
-          // Oyun başladıysa game controller'a yönlendir
+          // Oyun başladıysa game controller'a yönlendir (host olmayan oyuncular icin)
           if (status == 'playing' && !_navigated) {
             _navigated = true;
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (_) =>
-                      OnlineGameController(roomCode: widget.roomCode),
-                ),
-              );
+              if (context.mounted) {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) =>
+                        OnlineGameController(roomCode: widget.roomCode),
+                  ),
+                );
+              }
             });
           }
 
@@ -248,7 +261,7 @@ class _OnlineRoomScreenState extends State<OnlineRoomScreen> {
                                 ),
                                 child: Center(
                                   child: Text(
-                                    player['name'][0].toUpperCase(),
+                                    ((player['name'] ?? '') as String).isNotEmpty ? player['name'][0].toUpperCase() : '?',
                                     style: const TextStyle(
                                       color: AppTheme.primaryOrange,
                                       fontWeight: FontWeight.w700,

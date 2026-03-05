@@ -108,7 +108,8 @@ class _OnlineLobbyScreenState extends State<OnlineLobbyScreen> {
           ),
         ],
       ),
-      body: Padding(
+      resizeToAvoidBottomInset: true,
+      body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 24),
         child: Column(
           children: [
@@ -134,7 +135,7 @@ class _OnlineLobbyScreenState extends State<OnlineLobbyScreen> {
                     ),
                     child: Center(
                       child: Text(
-                        AuthService.displayName[0].toUpperCase(),
+                        AuthService.displayName.isNotEmpty ? AuthService.displayName[0].toUpperCase() : '?',
                         style: const TextStyle(
                           color: AppTheme.cyan,
                           fontSize: 18,

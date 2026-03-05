@@ -19,7 +19,7 @@ class OnlineGameOverScreen extends StatelessWidget {
     final sorted = List<Map<String, dynamic>>.from(players)
       ..sort((a, b) => (b['score'] as int).compareTo(a['score'] as int));
     final winner = sorted.first;
-    final uid = AuthService.currentUser!.uid;
+    final uid = AuthService.currentUser?.uid ?? '';
     final isHost = uid == data['hostUid'];
 
     return Scaffold(
@@ -159,7 +159,7 @@ class OnlineGameOverScreen extends StatelessWidget {
                               ),
                               child: Center(
                                 child: Text(
-                                  p['name'][0],
+                                  ((p['name'] ?? '') as String).isNotEmpty ? p['name'][0] : '?',
                                   style: TextStyle(
                                     color: i == 0
                                         ? Colors.white

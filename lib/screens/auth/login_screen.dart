@@ -93,13 +93,21 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         title: const Text('Online Giriş'),
       ),
-      body: Padding(
+      resizeToAvoidBottomInset: true,
+      body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 24),
-        child: Column(
-          children: [
-            const SizedBox(height: 40),
-            // Icon
-            Container(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            minHeight: MediaQuery.of(context).size.height -
+                MediaQuery.of(context).padding.top -
+                kToolbarHeight,
+          ),
+          child: IntrinsicHeight(
+            child: Column(
+              children: [
+                const SizedBox(height: 40),
+                // Icon
+                Container(
               width: 80,
               height: 80,
               decoration: BoxDecoration(
@@ -269,7 +277,9 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
             const SizedBox(height: 16),
-          ],
+              ],
+            ),
+          ),
         ),
       ),
     );

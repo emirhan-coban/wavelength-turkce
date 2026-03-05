@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
 import '../../models/game_category.dart';
 import '../../services/room_service.dart';
+import 'online_game_controller.dart';
 
 class OnlineCategoryScreen extends StatefulWidget {
   final String roomCode;
@@ -25,8 +26,14 @@ class _OnlineCategoryScreenState extends State<OnlineCategoryScreen> {
         categoryId: _selected!.id,
       );
       if (mounted) {
-        // Room stream otomatik olarak game controller'a yönlendirecek
-        Navigator.pop(context);
+        // Lobby ve category screen'leri kaldirip dogrudan game controller'a gec
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (_) => OnlineGameController(roomCode: widget.roomCode),
+          ),
+          (route) => route.isFirst,
+        );
       }
     } catch (e) {
       if (mounted) {
