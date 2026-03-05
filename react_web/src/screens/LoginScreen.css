@@ -1,0 +1,139 @@
+.login-screen {
+    padding: 8px 24px 24px;
+}
+
+.login-center {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+}
+
+.login-logo-container {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    margin-bottom: 8px;
+}
+
+.login-logo {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.login-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin: 0;
+    text-align: center;
+    color: var(--text-primary);
+}
+
+.login-subtitle {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin: 0;
+    text-align: center;
+    line-height: 1.5;
+}
+
+.login-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.login-input {
+    width: 100%;
+    padding: 16px 20px;
+    border-radius: 16px;
+    border: 1.5px solid var(--divider);
+    background-color: var(--card-color);
+    color: var(--text-primary);
+    font-size: 16px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.login-input::placeholder {
+    color: var(--text-tertiary);
+}
+
+.login-input:focus {
+    border-color: var(--primary-orange);
+}
+
+.login-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    margin: 4px 0;
+}
+
+.login-divider-line {
+    flex: 1;
+    height: 1px;
+    background-color: var(--divider);
+}
+
+.login-divider-text {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.btn-google {
+    width: 100%;
+    height: 56px;
+    border-radius: 28px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    font-weight: 700;
+    gap: 10px;
+    background-color: var(--card-color-light);
+    border: 1.5px solid var(--divider);
+    color: var(--text-primary);
+    transition: transform 0.1s, background-color 0.2s;
+}
+
+.btn-google:active {
+    transform: scale(0.98);
+    background-color: var(--card-color);
+}
+
+.btn-google svg {
+    width: 20px;
+    height: 20px;
+}
+
+.login-error {
+    color: var(--error);
+    font-size: 13px;
+    text-align: center;
+    margin: 0;
+    padding: 8px 12px;
+    background-color: rgba(229, 57, 53, 0.1);
+    border-radius: 8px;
+    border: 1px solid rgba(229, 57, 53, 0.3);
+}
+
+.login-back-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 0;
+    margin-top: 8px;
+}

@@ -1,0 +1,152 @@
+.result-screen {
+    padding: 8px 24px 24px;
+}
+
+.border-none {
+    border: none;
+}
+
+.result-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.feedback-card {
+    width: 100%;
+    padding: 16px 16px 12px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(250, 123, 27, 0.34), rgba(40, 216, 196, 0.24));
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.feedback-card h2 {
+    font-size: 28px;
+    font-weight: 800;
+    margin: 0 0 8px 0;
+    line-height: 1;
+}
+
+.feedback-card p {
+    color: rgba(157, 146, 139, 0.9);
+    font-size: 13px;
+    margin: 0;
+}
+
+.comparison-card {
+    width: 100%;
+    padding: 16px 14px 12px;
+    background-color: var(--card-color);
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+}
+
+.spectrum-display {
+    height: 54px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.spectrum-track-result {
+    height: 8px;
+    width: 100%;
+    border-radius: 999px;
+    background: linear-gradient(to right, #4A2D1C, var(--blue-track));
+    position: relative;
+}
+
+.result-marker {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.result-marker.target {
+    width: 12px;
+    height: 12px;
+    background-color: var(--cyan);
+    border-radius: 50%;
+    z-index: 2;
+}
+
+.result-marker.guess {
+    width: 26px;
+    height: 26px;
+    background-color: var(--primary-orange);
+    border-radius: 50%;
+    border: 2px solid var(--background);
+    box-shadow: 0 0 14px rgba(250, 123, 27, 0.45);
+    z-index: 1;
+}
+
+.marker-label {
+    position: absolute;
+    bottom: 100%;
+    font-size: 10px;
+    font-weight: 800;
+    margin-bottom: 15px;
+    white-space: nowrap;
+}
+
+.result-marker.target .marker-label {
+    color: var(--cyan);
+}
+
+.result-marker.guess .marker-label {
+    color: rgba(250, 123, 27, 0.95);
+}
+
+.comparison-legend {
+    display: flex;
+    justify-content: space-between;
+}
+
+.legend-item {
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.legend-item.guess {
+    color: rgba(250, 123, 27, 0.95);
+}
+
+.legend-item.target {
+    color: var(--cyan);
+}
+
+.score-badge-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 18px;
+}
+
+.score-badge {
+    padding: 12px 28px;
+    background-color: rgba(250, 123, 27, 0.15);
+    border-radius: 999px;
+    border: 1px solid rgba(250, 123, 27, 0.45);
+    color: var(--primary-orange);
+    font-size: 34px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.total-score-text {
+    color: rgba(157, 146, 139, 0.9);
+    font-size: 13px;
+    margin: 8px 0 0 0;
+}
+
+.result-footer {
+    padding-top: 20px;
+}
