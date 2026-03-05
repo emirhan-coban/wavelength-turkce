@@ -3,6 +3,9 @@ import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_theme.dart';
 import 'player_setup_screen.dart';
 import 'how_to_play_screen.dart';
+import 'auth/login_screen.dart';
+import '../services/auth_service.dart';
+import 'online/online_lobby_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -64,14 +67,11 @@ class HomeScreen extends StatelessWidget {
                       ),
                       child: Image.asset(
                         'assets/images/splash_logo_600x600.png',
-                        width: 180,
-                        height: 180,
+                        width: 160,
+                        height: 160,
                       ),
                     ),
-                    const SizedBox(height: 36),
-
-                    // Title
-                    const SizedBox(height: 48),
+                    const SizedBox(height: 28),
 
                     // Tagline
                     Text(
@@ -113,6 +113,8 @@ class HomeScreen extends StatelessWidget {
               ),
 
               // ── Bottom Buttons ──
+
+              // Yerel Oyun Butonu
               SizedBox(
                 width: double.infinity,
                 height: 56,
@@ -143,14 +145,10 @@ class HomeScreen extends StatelessWidget {
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
-                          Icons.play_circle_filled,
-                          size: 24,
-                          color: AppTheme.surface,
-                        ),
+                        Icon(Icons.people, size: 20, color: AppTheme.surface),
                         SizedBox(width: 8),
                         Text(
-                          'Oyuna Başla',
+                          'Yerel Oyun',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
@@ -162,7 +160,67 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
+
+              // Online Oyun Butonu
+              SizedBox(
+                width: double.infinity,
+                height: 56,
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(28),
+                    border: Border.all(
+                      color: AppTheme.cyan.withValues(alpha: 0.5),
+                      width: 1.5,
+                    ),
+                    color: AppTheme.tealBg,
+                  ),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(28),
+                      ),
+                    ),
+                    onPressed: () {
+                      if (AuthService.isLoggedIn) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const OnlineLobbyScreen(),
+                          ),
+                        );
+                      } else {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const LoginScreen(),
+                          ),
+                        );
+                      }
+                    },
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.wifi, size: 20, color: AppTheme.cyan),
+                        SizedBox(width: 8),
+                        Text(
+                          'Online Oyna',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: AppTheme.cyan,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              // Nasıl Oynanır
               Container(
                 decoration: BoxDecoration(
                   border: Border.all(
