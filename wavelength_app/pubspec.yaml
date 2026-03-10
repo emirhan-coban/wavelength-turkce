@@ -1,0 +1,47 @@
+name: wavelength
+description: "Zihindar - Türkçe Wavelength Parti Oyunu"
+publish_to: "none"
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.10.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  google_fonts: ^6.2.1 # Used as fallback font provider (Poppins)
+  provider: ^6.1.2
+  shared_preferences: ^2.3.2
+  audioplayers: ^6.1.0
+  flutter_animate: ^4.5.0
+  confetti: ^0.7.0
+  uuid: ^4.4.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/sounds/
+
+  # fonts:
+  # Poppins font files can be downloaded from https://fonts.google.com/specimen/Poppins
+  # and placed in assets/fonts/ — OR use the google_fonts package (already included)
+  # which downloads them at runtime. To use local fonts, uncomment below:
+  #   - family: Poppins
+  #     fonts:
+  #       - asset: assets/fonts/Poppins-Regular.ttf
+  #       - asset: assets/fonts/Poppins-Medium.ttf
+  #         weight: 500
+  #       - asset: assets/fonts/Poppins-SemiBold.ttf
+  #         weight: 600
+  #       - asset: assets/fonts/Poppins-Bold.ttf
+  #         weight: 700
+  #       - asset: assets/fonts/Poppins-ExtraBold.ttf
+  #         weight: 800
