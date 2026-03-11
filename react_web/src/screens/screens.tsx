@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import { useGameStore } from "../store/gameStore";
 import {
@@ -25,6 +25,10 @@ import {
   getResultLabel,
   getResultSubtitle,
   getResultColor,
+  getCurrentPsychic,
+  getSortedPlayers,
+  getNextPsychic,
+  getLeader,
 } from "../types";
 
 const fadeUp = {
@@ -88,24 +92,25 @@ export const HomeScreen: React.FC = () => {
             backgroundColor: `${AppColors.orange}1e`,
           }}
         />
-        {/* Emoji */}
-        <div className="absolute right-6 top-1/2 -translate-y-1/2 flex flex-col items-center gap-1">
-          <span className="text-4xl">🧠</span>
-          <span className="text-2xl">⚡</span>
+        {/* Icon */}
+        <div className="absolute right-6 top-1/2 -translate-y-1/2 flex items-center justify-center">
+          <div className="w-16 h-16 rounded-full flex items-center justify-center bg-orange-500/20 text-orange-500 text-3xl font-black">
+            Z
+          </div>
         </div>
         {/* Text */}
         <div className="absolute bottom-0 left-0 p-6">
           <h1 className="text-white font-extrabold text-2xl leading-tight mb-1">
-            Kelime Avı
+            Zihindar
           </h1>
           <p className="text-white/70 text-sm mb-3 leading-snug">
-            Arkadaşlarınla
+            Sinyali yakala,
             <br />
-            eğlenceye hazır mısın?
+            grubu yönlendir!
           </p>
           <div className="flex gap-2">
-            <InfoChip label="2-8 Oyuncu" icon="👥" color={AppColors.orange} />
-            <InfoChip label="15 Dakika" icon="⏱" color={AppColors.greyLight} />
+            <InfoChip label="2-8 Oyuncu" color={AppColors.orange} />
+            <InfoChip label="15 Dakika" color={AppColors.greyLight} />
           </div>
         </div>
       </div>
@@ -113,17 +118,16 @@ export const HomeScreen: React.FC = () => {
       {/* Stats */}
       <div className="grid grid-cols-3 gap-3 mb-6">
         {[
-          { emoji: "🎴", value: "100+", label: "Kart" },
-          { emoji: "🏆", value: "6", label: "Kategori" },
-          { emoji: "🌙", value: "Offline", label: "Parti Modu" },
+          { value: "100+", label: "Oyuncu Kartı" },
+          { value: "6", label: "Kategori" },
+          { value: "15dk", label: "Süre" },
         ].map((s) => (
           <div
             key={s.label}
             className="rounded-2xl p-3 flex flex-col items-center gap-1"
             style={{ backgroundColor: AppColors.surfaceLight }}
           >
-            <span className="text-xl">{s.emoji}</span>
-            <span className="text-white font-bold text-sm">{s.value}</span>
+            <span className="text-white font-bold text-sm mt-1">{s.value}</span>
             <span className="text-neutral-500 text-[10px]">{s.label}</span>
           </div>
         ))}
@@ -133,10 +137,10 @@ export const HomeScreen: React.FC = () => {
 
       {/* Buttons */}
       <div className="flex flex-col gap-3">
-        <Button onClick={startSetup} icon="▶">
+        <Button onClick={startSetup}>
           Oyuna Başla
         </Button>
-        <Button variant="secondary" onClick={() => setHowToOpen(true)} icon="?">
+        <Button variant="secondary" onClick={() => setHowToOpen(true)}>
           Nasıl Oynanır?
         </Button>
       </div>
@@ -505,9 +509,9 @@ export const CategorySelectScreen: React.FC = () => {
 // PHONE PASS SCREEN
 // ═══════════════════════════════════════════════════════════════════════════════
 export const PhonePassScreen: React.FC = () => {
-  const { currentRound, totalRounds, players, psychicReady, goHome } =
+  const { currentRound, totalRounds, players, psychicReady, goHome, currentPsychicIndex } =
     useGameStore();
-  const psychic = useGameStore((s) => s.currentPsychic());
+  const psychic = useMemo(() => getCurrentPsychic({ players, currentPsychicIndex } as any), [players, currentPsychicIndex]);
 
   if (!psychic) return null;
 
@@ -597,7 +601,7 @@ export const PhonePassScreen: React.FC = () => {
           })}
         </div>
 
-        <Button onClick={psychicReady} icon="👁">
+        <Button onClick={psychicReady}>
           Hazırım
         </Button>
       </div>
@@ -616,11 +620,19 @@ export const SecretTargetScreen: React.FC = () => {
     goToPhase,
     currentCategoryName,
     currentCategoryEmoji,
+    players,
+    currentPsychicIndex,
   } = useGameStore();
-  const psychic = useGameStore((s) => s.currentPsychic());
+  const psychic = useMemo(() => getCurrentPsychic({ players, currentPsychicIndex } as any), [players, currentPsychicIndex]);
   const [revealed, setRevealed] = useState(false);
 
-  if (!currentCard || !psychic) return null;
+  if (!currentCard || !psychic) {
+    return (
+      <motion.div {...fadeUp} className="flex-1 flex justify-center items-center h-full">
+        <div className="w-8 h-8 rounded-full border-4 border-t-orange-500 border-neutral-800 animate-spin" />
+      </motion.div>
+    );
+  }
 
   return (
     <motion.div {...fadeUp} className="flex flex-col h-full">
@@ -657,7 +669,7 @@ export const SecretTargetScreen: React.FC = () => {
                   borderColor: AppColors.orange,
                 }}
               >
-                <span className="text-5xl">🙈</span>
+                <span className="text-sm font-bold tracking-widest" style={{ color: AppColors.orange }}>GÖSTER</span>
               </div>
               <p className="text-neutral-400 text-base text-center leading-snug">
                 Hedefi Görmek İçin
@@ -691,6 +703,7 @@ export const SecretTargetScreen: React.FC = () => {
                 value={targetPosition}
                 targetValue={targetPosition}
                 interactive={false}
+                hideGuessHandle={true}
               />
               <div
                 className="flex items-start gap-3 rounded-2xl p-4 border"
@@ -729,20 +742,28 @@ export const ClueGivingScreen: React.FC = () => {
     goToPhase,
     currentCategoryName,
     currentCategoryEmoji,
+    players,
+    currentPsychicIndex,
   } = useGameStore();
-  const psychic = useGameStore((s) => s.currentPsychic());
+  const psychic = useMemo(() => getCurrentPsychic({ players, currentPsychicIndex } as any), [players, currentPsychicIndex]);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     setTimeout(() => inputRef.current?.focus(), 200);
   }, []);
 
-  if (!currentCard || !psychic) return null;
+  if (!currentCard || !psychic) {
+    return (
+      <motion.div {...fadeUp} className="flex-1 flex justify-center items-center h-full">
+        <div className="w-8 h-8 rounded-full border-4 border-t-orange-500 border-neutral-800 animate-spin" />
+      </motion.div>
+    );
+  }
 
   return (
     <motion.div {...fadeUp} className="flex flex-col h-full">
       <AppBar
-        title="Sıra Değişimi"
+        title="İpucu Ver"
         onBack={() => goToPhase("secretTarget")}
         trailing={
           <CategoryBadge
@@ -863,12 +884,20 @@ export const GroupGuessScreen: React.FC = () => {
     clue,
     currentCategoryName,
     currentCategoryEmoji,
+    players,
+    currentPsychicIndex,
   } = useGameStore();
-  const psychic = useGameStore((s) => s.currentPsychic());
-  const leaderboard = useGameStore((s) => s.leaderboard());
+  const psychic = useMemo(() => getCurrentPsychic({ players, currentPsychicIndex } as any), [players, currentPsychicIndex]);
+  const leaderboard = useMemo(() => getSortedPlayers({ players } as any), [players]);
   const [rulesOpen, setRulesOpen] = useState(false);
 
-  if (!currentCard || !psychic) return null;
+  if (!currentCard || !psychic) {
+    return (
+      <motion.div {...fadeUp} className="flex-1 flex justify-center items-center h-full">
+        <div className="w-8 h-8 rounded-full border-4 border-t-orange-500 border-neutral-800 animate-spin" />
+      </motion.div>
+    );
+  }
 
   return (
     <motion.div {...fadeUp} className="flex flex-col h-full">
@@ -998,21 +1027,18 @@ export const GroupGuessScreen: React.FC = () => {
         <div className="pt-2">
           {[
             {
-              icon: "👥",
               text: "Psişik hariç herkes ibreyi konumlandırabilir",
             },
-            { icon: "💬", text: "Grup tartışarak ortak bir karar almalı" },
+            { text: "Grup tartışarak ortak bir karar almalı" },
             {
-              icon: "🎯",
               text: "İbrenin hedef bölgeye yakınlığı puanı belirler",
             },
             {
-              icon: "🗳",
               text: "Tahmini kilitlemeden önce herkes hemfikir olmalı",
             },
-          ].map((r) => (
-            <div key={r.text} className="flex items-start gap-3 mb-4">
-              <span className="text-base">{r.icon}</span>
+          ].map((r, i) => (
+            <div key={i} className="flex items-start gap-3 mb-4">
+              <span style={{ color: AppColors.orange }} className="text-base mt-0.5">•</span>
               <p className="text-neutral-300 text-sm leading-relaxed">
                 {r.text}
               </p>
@@ -1028,10 +1054,10 @@ export const GroupGuessScreen: React.FC = () => {
 // ROUND RESULT SCREEN
 // ═══════════════════════════════════════════════════════════════════════════════
 export const RoundResultScreen: React.FC = () => {
-  const { currentRound, totalRounds, nextRound } = useGameStore();
-  const result = useGameStore((s) => s.lastRoundResult());
-  const leaderboard = useGameStore((s) => s.leaderboard());
-  const nextPsychic = useGameStore((s) => s.nextPsychic());
+  const { currentRound, totalRounds, nextRound, players, currentPsychicIndex, roundHistory } = useGameStore();
+  const result = useMemo(() => roundHistory.length > 0 ? roundHistory[roundHistory.length - 1] : null, [roundHistory]);
+  const leaderboard = useMemo(() => getSortedPlayers({ players } as any), [players]);
+  const nextPsychicResult = useMemo(() => getNextPsychic({ players, currentPsychicIndex } as any), [players, currentPsychicIndex]);
   const isLast = currentRound >= totalRounds;
 
   if (!result) return null;
@@ -1191,7 +1217,7 @@ export const RoundResultScreen: React.FC = () => {
         </div>
 
         {/* Next psychic preview */}
-        {!isLast && nextPsychic && (
+        {!isLast && nextPsychicResult && (
           <div
             className="flex items-center gap-4 rounded-2xl p-4 border mb-6"
             style={{
@@ -1202,15 +1228,15 @@ export const RoundResultScreen: React.FC = () => {
             <div
               className="w-11 h-11 rounded-full flex items-center justify-center font-bold text-white text-lg flex-shrink-0 border-2"
               style={{
-                backgroundColor: getAvatarColor(nextPsychic),
+                backgroundColor: getAvatarColor(nextPsychicResult),
                 borderColor: AppColors.orange,
               }}
             >
-              {nextPsychic.name ? nextPsychic.name[0].toUpperCase() : "?"}
+              {nextPsychicResult.name ? nextPsychicResult.name[0].toUpperCase() : "?"}
             </div>
             <div className="flex-1">
               <p className="text-neutral-400 text-xs">Sıradaki Lider</p>
-              <p className="text-white font-bold">{nextPsychic.name}</p>
+              <p className="text-white font-bold">{nextPsychicResult.name}</p>
             </div>
             <span style={{ color: AppColors.orange }} className="text-sm">
               →
@@ -1231,9 +1257,9 @@ export const RoundResultScreen: React.FC = () => {
 // GAME OVER SCREEN
 // ═══════════════════════════════════════════════════════════════════════════════
 export const GameOverScreen: React.FC = () => {
-  const { totalRounds, roundHistory, goHome, restartGame } = useGameStore();
-  const winner = useGameStore((s) => s.winner());
-  const leaderboard = useGameStore((s) => s.leaderboard());
+  const { totalRounds, roundHistory, goHome, restartGame, players, phase } = useGameStore();
+  const winner = useMemo(() => phase === 'gameOver' ? getLeader({ players } as any) : null, [players, phase]);
+  const leaderboard = useMemo(() => getSortedPlayers({ players } as any), [players]);
 
   if (!winner) return null;
 
@@ -1342,16 +1368,15 @@ export const GameOverScreen: React.FC = () => {
           <SectionTitle>OYUN İSTATİSTİKLERİ</SectionTitle>
           <div className="grid grid-cols-3 gap-4">
             {[
-              { emoji: "🎯", value: String(perfectHits), label: "Tam İsabet" },
-              { emoji: "🏁", value: String(totalRounds), label: "Toplam Tur" },
-              { emoji: "⭐", value: String(avgPoints), label: "Ort. Puan" },
+              { value: String(perfectHits), label: "Tam İsabet" },
+              { value: String(totalRounds), label: "Toplam Tur" },
+              { value: String(avgPoints), label: "Ort. Puan" },
             ].map((s) => (
               <div key={s.label} className="flex flex-col items-center gap-1">
-                <span className="text-2xl">{s.emoji}</span>
-                <span className="text-white font-extrabold text-xl">
+                <span className="text-white font-extrabold text-xl mt-2">
                   {s.value}
                 </span>
-                <span className="text-neutral-500 text-[10px] text-center">
+                <span className="text-neutral-500 text-[10px] text-center mb-2">
                   {s.label}
                 </span>
               </div>
@@ -1361,10 +1386,10 @@ export const GameOverScreen: React.FC = () => {
 
         {/* Buttons */}
         <div className="flex flex-col gap-3 pb-6">
-          <Button onClick={restartGame} icon="🔄">
+          <Button onClick={restartGame}>
             Tekrar Oyna
           </Button>
-          <Button variant="secondary" onClick={goHome} icon="🏠">
+          <Button variant="secondary" onClick={goHome}>
             Ana Menü
           </Button>
         </div>

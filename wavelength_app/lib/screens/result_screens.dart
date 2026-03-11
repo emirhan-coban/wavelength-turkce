@@ -194,11 +194,11 @@ class _RoundResultScreenState extends State<RoundResultScreen>
   }
 
   String _resultSubtitle(int points) {
-    if (points >= 4) return 'İnanılmaz! Tam isabet! 🎯';
-    if (points >= 3) return 'Çok iyi bir senkronizasyon! ⚡';
-    if (points >= 2) return 'Fena değil, biraz daha çalışın!';
-    if (points >= 1) return 'Eh işte, daha iyisi olabilirdi.';
-    return 'Maalesef bu sefer olmadı. 😅';
+    if (points >= 4) return 'Tam İsabet';
+    if (points >= 3) return 'Başarılı Tahmin';
+    if (points >= 2) return 'Fena Değil';
+    if (points >= 1) return 'Biraz Daha Yaklaşabilirdiniz';
+    return 'İsabet Yok';
   }
 }
 
@@ -243,15 +243,6 @@ class _BigScoreBadge extends StatelessWidget {
               color: _color,
               fontSize: 22,
               fontWeight: FontWeight.w900,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            'Toplam Puan: —',
-            style: TextStyle(
-              color: _color.withOpacity(0.7),
-              fontSize: 10,
-              fontWeight: FontWeight.w600,
             ),
           ),
         ],
@@ -757,7 +748,7 @@ class _WinnerSection extends StatelessWidget {
                 border: Border.all(color: AppColors.background, width: 2),
               ),
               child: const Center(
-                child: Text('🏆', style: TextStyle(fontSize: 16)),
+                child: Icon(Icons.emoji_events_rounded, size: 20, color: AppColors.background),
               ),
             ),
           ],
@@ -892,16 +883,14 @@ class _GameStats extends StatelessWidget {
           Row(
             children: [
               _StatTile(
-                emoji: '🎯',
                 value: '$perfectHits',
                 label: 'Tam İsabet',
               ),
               _StatTile(
-                emoji: '🏁',
                 value: '$totalRounds',
                 label: 'Toplam Tur',
               ),
-              _StatTile(emoji: '⭐', value: '$avgPoints', label: 'Ort. Puan'),
+              _StatTile(value: '$avgPoints', label: 'Ort. Puan'),
             ],
           ),
         ],
@@ -911,12 +900,10 @@ class _GameStats extends StatelessWidget {
 }
 
 class _StatTile extends StatelessWidget {
-  final String emoji;
   final String value;
   final String label;
 
   const _StatTile({
-    required this.emoji,
     required this.value,
     required this.label,
   });
@@ -926,8 +913,6 @@ class _StatTile extends StatelessWidget {
     return Expanded(
       child: Column(
         children: [
-          Text(emoji, style: const TextStyle(fontSize: 24)),
-          const SizedBox(height: 4),
           Text(
             value,
             style: const TextStyle(

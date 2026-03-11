@@ -129,9 +129,21 @@ class HomeScreen extends StatelessWidget {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Text('🧠', style: TextStyle(fontSize: 36)),
-                            const SizedBox(height: 4),
-                            const Text('⚡', style: TextStyle(fontSize: 24)),
+                            Container(
+                              width: 60,
+                              height: 60,
+                              decoration: BoxDecoration(
+                                color: AppColors.orange.withOpacity(0.2),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Center(
+                                child: Text('Z', style: TextStyle(
+                                  color: AppColors.orange,
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.w900,
+                                )),
+                              ),
+                            )
                           ],
                         ),
                       ),
@@ -187,14 +199,13 @@ class HomeScreen extends StatelessWidget {
               // ── Stats row ──
               Row(
                 children: [
-                  _StatCard(emoji: '🎴', label: '100+', sublabel: 'Kart'),
+                  _StatCard(label: '100+', sublabel: 'Oyun Kartı'),
                   const SizedBox(width: 12),
-                  _StatCard(emoji: '🏆', label: '6', sublabel: 'Kategori'),
+                  _StatCard(label: '6', sublabel: 'Kategori'),
                   const SizedBox(width: 12),
                   _StatCard(
-                    emoji: '🌙',
-                    label: 'Offline',
-                    sublabel: 'Parti Modu',
+                    label: '15dk',
+                    sublabel: 'Süre',
                   ),
                 ],
               ),
@@ -237,12 +248,10 @@ class HomeScreen extends StatelessWidget {
 }
 
 class _StatCard extends StatelessWidget {
-  final String emoji;
   final String label;
   final String sublabel;
 
   const _StatCard({
-    required this.emoji,
     required this.label,
     required this.sublabel,
   });
@@ -258,8 +267,7 @@ class _StatCard extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Text(emoji, style: const TextStyle(fontSize: 22)),
-            const SizedBox(height: 6),
+            const SizedBox(height: 8),
             Text(
               label,
               style: const TextStyle(
@@ -327,35 +335,30 @@ class _HowToPlaySheet extends StatelessWidget {
                       title: 'Psişik Seçilir',
                       desc:
                           'Her turda bir oyuncu psişik olur. Telefon o oyuncuya verilir.',
-                      emoji: '🧙',
                     ),
                     _HowToStep(
                       number: '2',
                       title: 'Gizli Hedef',
                       desc:
                           'Psişik, spektrum üzerindeki gizli hedef noktasını görür. Başka kimse göremez!',
-                      emoji: '🎯',
                     ),
                     _HowToStep(
                       number: '3',
                       title: 'İpucu Ver',
                       desc:
                           'Psişik, kartın iki kutbu arasındaki spektrumda hedefin konumunu anlatan bir kelime veya cümle söyler.',
-                      emoji: '💬',
                     ),
                     _HowToStep(
                       number: '4',
                       title: 'Grup Tahmin Eder',
                       desc:
                           'Gruptaki diğer oyuncular tartışarak ibrenin nereye yerleştirileceğine karar verir.',
-                      emoji: '👥',
                     ),
                     _HowToStep(
                       number: '5',
                       title: 'Puan Hesaplanır',
                       desc:
                           'İbre hedefe ne kadar yakınsa o kadar çok puan kazanırsınız! Tam isabette 4 puan.',
-                      emoji: '⭐',
                     ),
                     SizedBox(height: 8),
                     _PointsTable(),
@@ -375,13 +378,11 @@ class _HowToStep extends StatelessWidget {
   final String number;
   final String title;
   final String desc;
-  final String emoji;
 
   const _HowToStep({
     required this.number,
     required this.title,
     required this.desc,
-    required this.emoji,
   });
 
   @override
@@ -414,19 +415,13 @@ class _HowToStep extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        color: AppColors.white,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(width: 6),
-                    Text(emoji, style: const TextStyle(fontSize: 16)),
-                  ],
+                Text(
+                  title,
+                  style: const TextStyle(
+                    color: AppColors.white,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
                 const SizedBox(height: 4),
                 Text(

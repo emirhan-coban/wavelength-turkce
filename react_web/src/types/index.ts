@@ -139,11 +139,11 @@ export function getResultLabel(points: number): string {
 }
 
 export function getResultSubtitle(points: number): string {
-  if (points >= 4) return 'İnanılmaz! Tam isabet! 🎯';
-  if (points >= 3) return 'Çok iyi bir senkronizasyon! ⚡';
-  if (points >= 2) return 'Fena değil, biraz daha çalışın!';
-  if (points >= 1) return 'Eh işte, daha iyisi olabilirdi.';
-  return 'Maalesef bu sefer olmadı. 😅';
+  if (points >= 4) return 'Tam İsabet';
+  if (points >= 3) return 'Başarılı Tahmin';
+  if (points >= 2) return 'Fena Değil';
+  if (points >= 1) return 'Biraz Daha Yaklaşabilirdiniz';
+  return 'İsabet Yok';
 }
 
 export function getResultColor(points: number): string {

@@ -48,9 +48,8 @@ class PhonePassScreen extends StatelessWidget {
                   const SizedBox(height: 32),
 
                   // ── Instruction text ──────────────────────────────────────
-                  RichText(
-                    textAlign: TextAlign.center,
-                    text: TextSpan(
+                  Text.rich(
+                    TextSpan(
                       style: const TextStyle(
                         fontSize: 26,
                         fontWeight: FontWeight.w700,
@@ -66,6 +65,7 @@ class PhonePassScreen extends StatelessWidget {
                         const TextSpan(text: "'e\nVer"),
                       ],
                     ),
+                    textAlign: TextAlign.center,
                   ),
 
                   const SizedBox(height: 16),
@@ -89,7 +89,7 @@ class PhonePassScreen extends StatelessWidget {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          'Gizli ekranı Ahmet\'e ait;',
+                          'Sadece ${psychic.name} bakmalı!',
                           style: const TextStyle(
                             color: AppColors.grey,
                             fontSize: 13,
@@ -385,7 +385,7 @@ class _ClueGivingScreenState extends State<ClueGivingScreen> {
             backgroundColor: AppColors.background,
             resizeToAvoidBottomInset: true,
             appBar: ZihindarAppBar(
-              title: 'Sıra Değişimi',
+              title: 'İpucu Ver',
               onBack: () => provider.goToPhase(GamePhase.secretTarget),
               trailing: _CategoryBadge(
                 categoryName: provider.currentCategoryName,
@@ -470,7 +470,7 @@ class _ClueGivingScreenState extends State<ClueGivingScreen> {
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 16,
-                        vertical: 4,
+                        vertical: 12,
                       ),
                       decoration: BoxDecoration(
                         color: AppColors.surfaceLight,
@@ -1132,7 +1132,7 @@ class _PlayersPreview extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                isPsychic ? '🧠' : p.name.split(' ').first,
+                p.name.split(' ').first,
                 style: TextStyle(
                   color: isPsychic ? AppColors.orange : AppColors.grey,
                   fontSize: 11,

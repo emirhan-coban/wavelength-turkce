@@ -68,9 +68,9 @@ export const Avatar: React.FC<AvatarProps> = ({
   const initial = player.name ? player.name[0].toUpperCase() : "?";
   const borderStyle = highlighted
     ? {
-        border: `3px solid ${AppColors.orange}`,
-        boxShadow: `0 0 16px ${AppColors.orange}66`,
-      }
+      border: `3px solid ${AppColors.orange}`,
+      boxShadow: `0 0 16px ${AppColors.orange}66`,
+    }
     : {};
 
   return (
@@ -160,11 +160,10 @@ export const LeaderboardRow: React.FC<LeaderboardRowProps> = ({
   const initial = player.name ? player.name[0].toUpperCase() : "?";
   return (
     <div
-      className={`flex items-center gap-3 rounded-2xl px-4 py-3 mb-2 transition-all ${
-        highlight
-          ? "bg-orange-600/15 border border-orange-600/40"
-          : "bg-neutral-700/60"
-      }`}
+      className={`flex items-center gap-3 rounded-2xl px-4 py-3 mb-2 transition-all ${highlight
+        ? "bg-orange-600/15 border border-orange-600/40"
+        : "bg-neutral-700/60"
+        }`}
     >
       {/* Rank */}
       <div
@@ -215,6 +214,7 @@ interface SliderProps {
   targetValue?: number | null; // revealed target
   interactive?: boolean;
   onChange?: (value: number) => void;
+  hideGuessHandle?: boolean;
 }
 
 export const WavelengthSlider: React.FC<SliderProps> = ({
@@ -224,14 +224,15 @@ export const WavelengthSlider: React.FC<SliderProps> = ({
   targetValue = null,
   interactive = false,
   onChange,
+  hideGuessHandle = false,
 }) => {
-  const trackRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const getPositionFromEvent = useCallback(
     (clientX: number): number => {
-      const track = trackRef.current;
-      if (!track) return value;
-      const rect = track.getBoundingClientRect();
+      const el = containerRef.current;
+      if (!el) return value;
+      const rect = el.getBoundingClientRect();
       return Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
     },
     [value],
@@ -264,110 +265,168 @@ export const WavelengthSlider: React.FC<SliderProps> = ({
     document.addEventListener("touchend", end);
   };
 
-  const guessPercent = value * 100;
-  const targetPercent = targetValue != null ? targetValue * 100 : null;
+  const guessPct = `${value * 100}%`;
+  const targetPct = targetValue != null ? `${targetValue * 100}%` : null;
+
+  // Track dimensions matching Flutter: 12px track height, total 80px container
+  const TRACK_H = 12;
+  const CONTAINER_H = 80;
+  const trackTop = (CONTAINER_H - TRACK_H) / 2;
+  const centerY = CONTAINER_H / 2;
 
   return (
     <div className="w-full select-none">
-      {/* Track */}
+      {/* Main slider area — fixed height like Flutter's SizedBox(height: 80) */}
       <div
-        ref={trackRef}
-        className="relative h-8 rounded-full cursor-pointer"
+        ref={containerRef}
+        className="relative w-full"
         style={{
-          background: `linear-gradient(to right, #444, #555, #444)`,
+          height: CONTAINER_H,
+          cursor: interactive ? "pointer" : "default",
           userSelect: "none",
         }}
         onMouseDown={handleMouseDown}
         onTouchStart={handleTouchStart}
       >
-        {/* Score zones (shown when target revealed) */}
-        {targetPercent != null && (
+        {/* ── Gradient track (centered vertically) ── */}
+        <div
+          className="absolute w-full rounded-full"
+          style={{
+            top: trackTop,
+            height: TRACK_H,
+            background: "linear-gradient(to right, #444, #555, #444)",
+          }}
+        />
+
+        {/* ── Score zones (shown when target revealed) ── */}
+        {targetPct != null && targetValue != null && (
           <>
             {[
-              { width: 70, opacity: 0.15 },
-              { width: 50, opacity: 0.25 },
-              { width: 32, opacity: 0.4 },
-              { width: 16, opacity: 0.75 },
-            ].map(({ width, opacity }, i) => (
-              <div
-                key={i}
-                className="absolute top-0 h-full rounded-full"
-                style={{
-                  left: `${Math.max(0, targetPercent - width / 2)}%`,
-                  width: `${Math.min(100 - Math.max(0, targetPercent - width / 2), width)}%`,
-                  backgroundColor: AppColors.orange,
-                  opacity,
-                }}
-              />
-            ))}
-            {/* Target arrow */}
+              { halfW: 0.35, opacity: 0.15 },
+              { halfW: 0.25, opacity: 0.25 },
+              { halfW: 0.16, opacity: 0.4 },
+              { halfW: 0.08, opacity: 0.75 },
+            ].map(({ halfW, opacity }, i) => {
+              const leftPct = Math.max(0, targetValue - halfW) * 100;
+              const rightPct = Math.min(1, targetValue + halfW) * 100;
+              return (
+                <div
+                  key={i}
+                  className="absolute rounded-full"
+                  style={{
+                    top: trackTop,
+                    height: TRACK_H,
+                    left: `${leftPct}%`,
+                    width: `${rightPct - leftPct}%`,
+                    backgroundColor: AppColors.orange,
+                    opacity,
+                  }}
+                />
+              );
+            })}
+
+            {/* ── Target indicator ── */}
             <div
-              className="absolute top-0 h-full flex flex-col items-center"
+              className="absolute flex flex-col items-center"
               style={{
-                left: `${targetPercent}%`,
+                left: targetPct,
+                top: 0,
+                height: CONTAINER_H,
                 transform: "translateX(-50%)",
+                pointerEvents: "none",
               }}
             >
+              {/* "HEDEF" label */}
               <div
                 className="text-[9px] font-bold tracking-widest whitespace-nowrap"
-                style={{ color: AppColors.orange, marginTop: -18 }}
+                style={{
+                  color: AppColors.orange,
+                  position: "absolute",
+                  top: trackTop - 28,
+                }}
               >
                 HEDEF
               </div>
+              {/* Triangle arrow pointing down to track */}
               <div
                 style={{
+                  position: "absolute",
+                  top: trackTop - 12,
                   width: 0,
                   height: 0,
-                  borderLeft: "6px solid transparent",
-                  borderRight: "6px solid transparent",
-                  borderTop: `8px solid ${AppColors.orange}`,
-                  marginTop: -2,
+                  borderLeft: "7px solid transparent",
+                  borderRight: "7px solid transparent",
+                  borderTop: `10px solid ${AppColors.orange}`,
+                }}
+              />
+              {/* Vertical line through track */}
+              <div
+                style={{
+                  position: "absolute",
+                  top: trackTop,
+                  height: TRACK_H,
+                  width: 2,
+                  backgroundColor: AppColors.orange,
+                  borderRadius: 1,
+                  transform: "translateX(-0.5px)",
                 }}
               />
             </div>
           </>
         )}
 
-        {/* Guess handle */}
-        <div
-          className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2"
-          style={{ left: `${guessPercent}%` }}
-        >
-          {/* Outer ring */}
+        {/* ── Guess handle ── */}
+        {!hideGuessHandle && (
           <div
-            className="rounded-full flex items-center justify-center"
+            className="absolute"
             style={{
-              width: 28,
-              height: 28,
-              backgroundColor: "white",
-              boxShadow: "0 2px 10px rgba(0,0,0,0.5)",
+              left: guessPct,
+              top: centerY,
+              transform: "translate(-50%, -50%)",
+              pointerEvents: "none",
             }}
           >
+            {/* Outer white circle */}
             <div
-              className="rounded-full"
+              className="rounded-full flex items-center justify-center"
               style={{
-                width: 12,
-                height: 12,
-                backgroundColor: AppColors.surface,
+                width: 28,
+                height: 28,
+                backgroundColor: "white",
+                boxShadow: "0 2px 10px rgba(0,0,0,0.5)",
               }}
-            />
+            >
+              <div
+                className="rounded-full"
+                style={{
+                  width: 12,
+                  height: 12,
+                  backgroundColor: AppColors.surface,
+                }}
+              />
+            </div>
           </div>
-          {/* TAHMİN label */}
+        )}
+
+        {/* "TAHMİN" label below the track, centered on guess */}
+        {!hideGuessHandle && (
           <div
-            className="text-[9px] font-bold tracking-widest whitespace-nowrap"
+            className="absolute text-[9px] font-bold tracking-widest whitespace-nowrap"
             style={{
+              left: guessPct,
+              top: trackTop + TRACK_H + 10,
+              transform: "translateX(-50%)",
               color: AppColors.greyLight,
-              marginTop: 4,
-              textAlign: "center",
+              pointerEvents: "none",
             }}
           >
             TAHMİN
           </div>
-        </div>
+        )}
       </div>
 
-      {/* Labels */}
-      <div className="flex justify-between mt-4">
+      {/* ── Pole labels ── */}
+      <div className="flex justify-between mt-2">
         <span className="text-neutral-300 text-sm font-semibold">
           {leftLabel}
         </span>

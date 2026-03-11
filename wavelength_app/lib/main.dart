@@ -37,6 +37,56 @@ class ZihindarApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Base text theme with colors & weights — Poppins is applied via
+    // GoogleFonts.poppinsTextTheme() which wraps every style.
+    final baseTextTheme = TextTheme(
+      displayLarge: TextStyle(
+        color: AppColors.white,
+        fontWeight: FontWeight.w800,
+      ),
+      displayMedium: TextStyle(
+        color: AppColors.white,
+        fontWeight: FontWeight.w700,
+      ),
+      displaySmall: TextStyle(
+        color: AppColors.white,
+        fontWeight: FontWeight.w700,
+      ),
+      headlineLarge: TextStyle(
+        color: AppColors.white,
+        fontWeight: FontWeight.w700,
+      ),
+      headlineMedium: TextStyle(
+        color: AppColors.white,
+        fontWeight: FontWeight.w600,
+      ),
+      headlineSmall: TextStyle(
+        color: AppColors.white,
+        fontWeight: FontWeight.w600,
+      ),
+      titleLarge: TextStyle(
+        color: AppColors.white,
+        fontWeight: FontWeight.w600,
+      ),
+      titleMedium: TextStyle(
+        color: AppColors.white,
+        fontWeight: FontWeight.w500,
+      ),
+      titleSmall: TextStyle(
+        color: AppColors.greyLight,
+        fontWeight: FontWeight.w500,
+      ),
+      bodyLarge: TextStyle(color: AppColors.white),
+      bodyMedium: TextStyle(color: AppColors.greyLight),
+      bodySmall: TextStyle(color: AppColors.grey),
+      labelLarge: TextStyle(
+        color: AppColors.white,
+        fontWeight: FontWeight.w600,
+      ),
+      labelMedium: TextStyle(color: AppColors.greyLight),
+      labelSmall: TextStyle(color: AppColors.grey),
+    );
+
     return MaterialApp(
       title: 'Zihindar',
       debugShowCheckedModeBanner: false,
@@ -48,82 +98,33 @@ class ZihindarApp extends StatelessWidget {
           primary: AppColors.orange,
           secondary: AppColors.orangeLight,
           surface: AppColors.surface,
-          background: AppColors.background,
           onPrimary: AppColors.white,
           onSurface: AppColors.white,
-          onBackground: AppColors.white,
         ),
-        fontFamily: GoogleFonts.poppins().fontFamily,
-        textTheme: const TextTheme(
-          displayLarge: TextStyle(
-            color: AppColors.white,
-            fontWeight: FontWeight.w800,
-          ),
-          displayMedium: TextStyle(
-            color: AppColors.white,
-            fontWeight: FontWeight.w700,
-          ),
-          displaySmall: TextStyle(
-            color: AppColors.white,
-            fontWeight: FontWeight.w700,
-          ),
-          headlineLarge: TextStyle(
-            color: AppColors.white,
-            fontWeight: FontWeight.w700,
-          ),
-          headlineMedium: TextStyle(
-            color: AppColors.white,
-            fontWeight: FontWeight.w600,
-          ),
-          headlineSmall: TextStyle(
-            color: AppColors.white,
-            fontWeight: FontWeight.w600,
-          ),
-          titleLarge: TextStyle(
-            color: AppColors.white,
-            fontWeight: FontWeight.w600,
-          ),
-          titleMedium: TextStyle(
-            color: AppColors.white,
-            fontWeight: FontWeight.w500,
-          ),
-          titleSmall: TextStyle(
-            color: AppColors.greyLight,
-            fontWeight: FontWeight.w500,
-          ),
-          bodyLarge: TextStyle(color: AppColors.white),
-          bodyMedium: TextStyle(color: AppColors.greyLight),
-          bodySmall: TextStyle(color: AppColors.grey),
-          labelLarge: TextStyle(
-            color: AppColors.white,
-            fontWeight: FontWeight.w600,
-          ),
-          labelMedium: TextStyle(color: AppColors.greyLight),
-          labelSmall: TextStyle(color: AppColors.grey),
-        ),
-        appBarTheme: const AppBarTheme(
+        // Apply Poppins to every text style in one shot
+        textTheme: GoogleFonts.poppinsTextTheme(baseTextTheme),
+        appBarTheme: AppBarTheme(
           backgroundColor: AppColors.background,
           foregroundColor: AppColors.white,
           elevation: 0,
           scrolledUnderElevation: 0,
           centerTitle: true,
-          titleTextStyle: TextStyle(
+          titleTextStyle: GoogleFonts.poppins(
             color: AppColors.white,
             fontSize: 18,
             fontWeight: FontWeight.w700,
-            fontFamily: 'Poppins',
           ),
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.orange,
             foregroundColor: AppColors.white,
+            disabledBackgroundColor: AppColors.orange.withValues(alpha: 0.4),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
             ),
             elevation: 0,
-            textStyle: const TextStyle(
-              fontFamily: 'Poppins',
+            textStyle: GoogleFonts.poppins(
               fontWeight: FontWeight.w700,
               fontSize: 16,
             ),
@@ -136,8 +137,7 @@ class ZihindarApp extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
             ),
-            textStyle: const TextStyle(
-              fontFamily: 'Poppins',
+            textStyle: GoogleFonts.poppins(
               fontWeight: FontWeight.w600,
               fontSize: 15,
             ),
@@ -167,9 +167,9 @@ class ZihindarApp extends StatelessWidget {
         ),
         snackBarTheme: SnackBarThemeData(
           backgroundColor: AppColors.surfaceLight,
-          contentTextStyle: const TextStyle(
+          contentTextStyle: GoogleFonts.poppins(
             color: AppColors.white,
-            fontFamily: 'Poppins',
+            fontSize: 14,
           ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
